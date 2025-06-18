@@ -25,8 +25,8 @@ public class UserService {
 	
 	@PostConstruct
 	public void creatAdminAccount() {
-		User admin = userRepository.findByRole(Roles.ADMIN);
-		if(admin==null) {
+		 List<User> list = userRepository.findByRole(Roles.ADMIN);
+		if(list==null) {
 		   User user = new User();
 		   user.setUserID(UUID.randomUUID().toString());
 		   user.setName("admin");
@@ -52,7 +52,7 @@ public class UserService {
 	}
 	
 	public List<User> getAllUsers(){
-		return userRepository.findAll();
+		return userRepository.findByRole(Roles.USER);
 	}
 
 	

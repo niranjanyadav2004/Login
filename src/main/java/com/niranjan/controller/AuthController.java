@@ -8,6 +8,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,7 @@ import com.niranjan.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin("*")
 public class AuthController {
 
 	@Autowired
@@ -60,12 +62,16 @@ public class AuthController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         String token = this.helper.generateToken(userDetails);
         
+        
         RefreshToken refreshToken = this.refreshTokenService.createRefreshToken(userDetails.getUsername());
+        User user = refreshToken.getUser();
+        
 
         JwtResponse response = JwtResponse.builder()
                 .jwtToken(token)
                 .refreshToken(refreshToken.getRefresToken())
                 .username(userDetails.getUsername())
+                .role(user.getRole().toString())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
